@@ -1,0 +1,10 @@
+Vagrant.configure("2") do |config|
+  config.vm.define "Server" do |server|
+    server.vm.box = "generic/alpine38"
+    server.vm.hostname = "alemarchS"
+  end
+  config.vm.define "ServiceWorker" do |serviceWorker|
+    serviceWorker.vm.box = "generic/alpine38"
+    serviceWorker.vm.hostname = "alemarchSW"
+  end
+end
