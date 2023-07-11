@@ -1,20 +1,37 @@
+$serverScript = <<-SCRIPT
+	curl -sfL https://get.k3s.io |
+	SERVER_IP="192.168.56.110" \
+	INSTALL_K3S_EXEC="--write-kubeconfig-mode=644 --tls-san $(hostname) --node-ip $SERVER_IP --token-file /vagrant/token --bind-address=$SERVER_IP --advertise-address=$SERVER_IP" \
+	sh -
+	sleep 10
+SCRIPT
+
+$agentScript = <<-SCRIPT
+	curl -sfL https://get.k3s.io |
+	SERVER_IP="192.168.56.110" \
+	AGENT_IP="192.168.56.111" \
+	INSTALL_K3S_EXEC="agent --server https://$SERVER_IP:6443 --token-file /vagrant/token --node-ip=$AGENT_IP" sh -
+SCRIPT
+
 Vagrant.configure("2") do |config|
 
   config.vm.provider "libvirt" do |lv|
     lv.cpus = 1
     lv.memory = 512
   end
+  config.vm.synced_folder "./confs", "/vagrant", type:"nfs"
+  config.vm.box = "generic/alpine311"
 
   config.vm.define "Server" do |server|
-    server.vm.box = "generic/alpine38"
     server.vm.hostname = "alemarchS"
     server.vm.network "private_network", ip: "192.168.56.110"
+    server.vm.provision "shell", inline: $serverScript
   end
 
   config.vm.define "ServiceWorker" do |serviceWorker|
-    serviceWorker.vm.box = "generic/alpine38"
     serviceWorker.vm.hostname = "alemarchSW"
     serviceWorker.vm.network "private_network", ip: "192.168.56.111"
+    serviceWorker.vm.provision "shell", inline: $agentScript
   end
 
 end
