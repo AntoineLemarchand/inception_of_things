@@ -1,7 +1,7 @@
 $serverScript = <<-SCRIPT
 	curl -sfL https://get.k3s.io |
 	SERVER_IP="192.168.56.110" \
-	INSTALL_K3S_EXEC="--write-kubeconfig-mode=644 --tls-san $(hostname) --node-ip $SERVER_IP --token-file /vagrant/token --bind-address=$SERVER_IP --advertise-address=$SERVER_IP" \
+	INSTALL_K3S_EXEC="--write-kubeconfig-mode=644 --tls-san $(hostname) --node-ip $SERVER_IP --token-file /confs/token --bind-address=$SERVER_IP --advertise-address=$SERVER_IP" \
 	sh -
 	sleep 10
 SCRIPT
@@ -10,16 +10,16 @@ $agentScript = <<-SCRIPT
 	curl -sfL https://get.k3s.io |
 	SERVER_IP="192.168.56.110" \
 	AGENT_IP="192.168.56.111" \
-	INSTALL_K3S_EXEC="agent --server https://$SERVER_IP:6443 --token-file /vagrant/token --node-ip=$AGENT_IP" sh -
+	INSTALL_K3S_EXEC="agent --server https://$SERVER_IP:6443 --token-file /confs/token --node-ip=$AGENT_IP" sh -
 SCRIPT
 
 Vagrant.configure("2") do |config|
 
   config.vm.provider "libvirt" do |lv|
     lv.cpus = 1
-    lv.memory = 512
+    lv.memory = 1024
   end
-  config.vm.synced_folder "./confs", "/vagrant", type:"rsync"
+  config.vm.synced_folder "./confs", "/confs", type:"rsync"
   config.vm.box = "generic/alpine317"
 
   config.vm.define "Server" do |server|
