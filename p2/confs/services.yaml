@@ -1,0 +1,36 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: app1
+spec:
+  ports:
+    - port: 80
+      protocol: TCP
+  selector:
+    app:  app1
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: app2
+spec:
+  ports:
+    - port: 80
+      protocol: TCP
+  selector:
+    app: app2
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: app3
+spec:
+  ports:
+    - port: 80
+      protocol: TCP
+  selector:
+    app: app3
